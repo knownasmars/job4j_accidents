@@ -6,11 +6,10 @@ import org.springframework.stereotype.*;
 
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.model.AccidentType;
+import ru.job4j.accidents.model.Rule;
 import ru.job4j.accidents.repository.AccidentMem;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 @AllArgsConstructor
@@ -20,13 +19,33 @@ public class AccidentService {
 
     private final AccidentTypeService typeService;
 
-    public Accident save(Accident accident) {
-        Optional<AccidentType> opt = typeService.findTypeById(accident.getType().getId());
-        if (opt.isEmpty()) {
+    private final RuleService ruleService;
+
+    public boolean save(Accident accident, int type, String[] ruleIds) {
+        Accident forAdd = setTypeAndRules(accident, type, ruleIds);
+        return accidentMem.save(forAdd);
+    }
+
+    private Accident setTypeAndRules(Accident accident, int typeId, String[] rIds) {
+        Optional<AccidentType> accidentTypeOptional = typeService.findTypeById(typeId);
+        if (accidentTypeOptional.isEmpty()) {
             throw new NoSuchElementException("The accident type is not found");
         }
-        accident.setType(opt.get());
-        return accidentMem.save(accident);
+        Set<Rule> ruleSet = new LinkedHashSet<>();
+
+        for (String id: rIds) {
+            int accidentId = Integer.parseInt(id);
+            Optional<Rule> ruleOptional = ruleService.findById(accidentId);
+            if (ruleOptional.isEmpty()) {
+                throw new NoSuchElementException("The accident rule is not found");
+            }
+            ruleSet.add(ruleOptional.get());
+        }
+        accident.setType(accidentTypeOptional.get());
+        accidentMem.save(accident);
+        accident.setRules(ruleSet);
+
+        return accident;
     }
 
     public Optional<Accident> findById(int id) {

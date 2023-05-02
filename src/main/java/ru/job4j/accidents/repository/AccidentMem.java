@@ -17,10 +17,9 @@ public class AccidentMem {
     private AccidentMem() {
     }
 
-    public Accident save(Accident accident) {
+    public boolean save(Accident accident) {
         accident.setId(nextId.incrementAndGet());
-        accidents.put(accident.getId(), accident);
-        return accident;
+        return accidents.putIfAbsent(accident.getId(), accident) == null;
     }
 
     public Optional<Accident> findById(int id) {

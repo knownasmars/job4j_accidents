@@ -10,8 +10,12 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import ru.job4j.accidents.model.Accident;
+import ru.job4j.accidents.model.AccidentType;
 import ru.job4j.accidents.service.AccidentService;
 import ru.job4j.accidents.service.AccidentTypeService;
+import ru.job4j.accidents.service.RuleService;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @AllArgsConstructor
@@ -21,16 +25,24 @@ public class AccidentController {
 
     private final AccidentTypeService typeService;
 
+    private final RuleService ruleService;
+
     @GetMapping("/saveAccident")
     public String viewCreateAccident(Model model) {
-        typeService.getAllTypes();
         model.addAttribute("types", typeService.getAllTypes());
+        model.addAttribute("rules", ruleService.getAllRules().stream().toList());
         return "createAccident";
     }
 
     @PostMapping("/saveAccident")
-    public String save(@ModelAttribute Accident accident) {
-        accidentService.save(accident);
+    public String save(Model model, @ModelAttribute Accident accident, HttpServletRequest req) {
+        String[] ids = req.getParameterValues("rIds");
+        int typeId = accident.getType().getId();
+        accidentService.save(accident, typeId, ids);
+        if (!accidentService.save(accident, typeId, ids)) {
+            model.addAttribute("message", "The accident wasn't saved!");
+            return "templates/errors/404";
+        }
         return "redirect:/index";
     }
 
@@ -43,6 +55,7 @@ public class AccidentController {
         }
         model.addAttribute("accident", accidentOptional.get());
         model.addAttribute("types", typeService.getAllTypes());
+        model.addAttribute("rules", ruleService.getAllRules().stream().toList());
         return "editAccident";
     }
 
