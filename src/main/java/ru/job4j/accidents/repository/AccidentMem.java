@@ -3,9 +3,7 @@ package ru.job4j.accidents.repository;
 import org.springframework.stereotype.Repository;
 import ru.job4j.accidents.model.Accident;
 
-import java.util.Collection;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -17,9 +15,6 @@ public class AccidentMem {
     private Map<Integer, Accident> accidents = new ConcurrentHashMap<>();
 
     private AccidentMem() {
-        save(new Accident(0, "test", "test", "test"));
-        save(new Accident(0, "test1", "test1", "test1"));
-        save(new Accident(0, "test2", "test2", "test2"));
     }
 
     public Accident save(Accident accident) {
@@ -33,15 +28,10 @@ public class AccidentMem {
     }
 
     public boolean update(Accident accident) {
-        return accidents.computeIfPresent(accident.getId(),
-                (id, oldAccident) ->
-                        new Accident(oldAccident.getId(),
-                                accident.getName(),
-                                accident.getText(),
-                                accident.getAddress())) != null;
+        return accidents.replace(accident.getId(), accident) != null;
     }
 
-    public Collection<Accident> findAll() {
-        return accidents.values();
+    public List<Accident> findAll() {
+        return new ArrayList<>(accidents.values());
     }
 }
