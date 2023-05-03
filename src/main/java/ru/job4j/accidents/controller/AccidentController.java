@@ -10,7 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import ru.job4j.accidents.model.Accident;
-import ru.job4j.accidents.service.JDBCAccidentService;
+import ru.job4j.accidents.service.HbmAccidentService;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,7 +18,7 @@ import javax.servlet.http.HttpServletRequest;
 @AllArgsConstructor
 public class AccidentController {
 
-    private final JDBCAccidentService accidentService;
+    private final HbmAccidentService accidentService;
 
     @GetMapping("/saveAccident")
     public String viewCreateAccident(Model model) {
@@ -38,7 +38,7 @@ public class AccidentController {
     public String edit(Model model, @PathVariable int id) {
         var accident = accidentService.findById(id);
         if (accident.isEmpty()) {
-            model.addAttribute("message", "Accident not found");
+            model.addAttribute("message", "Accident not found.");
             return "errors/404";
         }
         model.addAttribute("accident", accident.get());
