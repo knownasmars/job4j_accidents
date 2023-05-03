@@ -11,6 +11,9 @@ import org.springframework.ui.Model;
 
 import ru.job4j.accidents.model.Accident;
 import ru.job4j.accidents.service.HbmAccidentService;
+import ru.job4j.accidents.service.SpringDataAccidentService;
+import ru.job4j.accidents.service.SpringDataAccidentTypeService;
+import ru.job4j.accidents.service.SpringDataRuleService;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -18,18 +21,20 @@ import javax.servlet.http.HttpServletRequest;
 @AllArgsConstructor
 public class AccidentController {
 
-    private final HbmAccidentService accidentService;
+    private final SpringDataAccidentService accidentService;
+    private final SpringDataAccidentTypeService typeService;
+    private final SpringDataRuleService ruleService;
 
     @GetMapping("/saveAccident")
     public String viewCreateAccident(Model model) {
-        model.addAttribute("types", accidentService.getAccidentTypes());
-        model.addAttribute("rules", accidentService.getRules());
+        model.addAttribute("types", typeService.getAccidentTypes());
+        model.addAttribute("rules", ruleService.getRules());
         return "createAccident";
     }
 
     @PostMapping("/saveAccident")
     public String save(Model model, @ModelAttribute Accident accident, HttpServletRequest req) {
-        accident.setRules(accidentService.makeRules(req.getParameterValues("rIds")));
+        accident.setRules(ruleService.makeRules(req.getParameterValues("rIds")));
         accidentService.create(accident);
         return "redirect:/index";
     }
@@ -42,14 +47,14 @@ public class AccidentController {
             return "errors/404";
         }
         model.addAttribute("accident", accident.get());
-        model.addAttribute("types", accidentService.getAccidentTypes());
-        model.addAttribute("rules", accidentService.getRules());
+        model.addAttribute("types", typeService.getAccidentTypes());
+        model.addAttribute("rules", ruleService.getRules());
         return "editAccident";
     }
 
     @PostMapping("/updateAccident")
     public String update(@ModelAttribute Accident accident, HttpServletRequest req) {
-        accident.setRules(accidentService.makeRules(req.getParameterValues("rIds")));
+        accident.setRules(ruleService.makeRules(req.getParameterValues("rIds")));
         accidentService.update(accident);
         return "redirect:/index";
     }
