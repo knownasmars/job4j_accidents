@@ -16,7 +16,7 @@ import ru.job4j.accidents.repository.UserRepository;
 @Controller
 public class RegControl {
 
-    ;private static final Logger LOG = LogManager.getLogger(RegControl.class.getName());
+    private static final Logger LOG = LogManager.getLogger(RegControl.class.getName());
 
     private final PasswordEncoder encoder;
     private final UserRepository users;
