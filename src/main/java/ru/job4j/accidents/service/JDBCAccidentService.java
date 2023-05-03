@@ -10,7 +10,6 @@ import java.util.*;
 @Service
 @AllArgsConstructor
 public class JDBCAccidentService {
-
     private final AccidentJdbcTemplate accidentsRepository;
 
     public void create(Accident accident) {
@@ -21,7 +20,7 @@ public class JDBCAccidentService {
         accidentsRepository.update(accident);
     }
 
-    public Collection<Accident> findAll() {
+    public List<Accident> findAll() {
         return accidentsRepository.getAll();
     }
 
@@ -29,11 +28,11 @@ public class JDBCAccidentService {
         return accidentsRepository.findById(id);
     }
 
-    public Collection<AccidentType> getAccidentTypes() {
+    public List<AccidentType> getAccidentTypes() {
         return accidentsRepository.getAccidentTypes();
     }
 
-    public Collection<Rule> getRules() {
+    public List<Rule> getRules() {
         return accidentsRepository.getRules();
     }
 

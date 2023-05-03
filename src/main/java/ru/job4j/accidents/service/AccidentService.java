@@ -1,68 +1,22 @@
 package ru.job4j.accidents.service;
 
-import lombok.AllArgsConstructor;
-
-import org.springframework.stereotype.*;
-
-import ru.job4j.accidents.model.Accident;
-import ru.job4j.accidents.model.AccidentType;
-import ru.job4j.accidents.model.Rule;
-import ru.job4j.accidents.repository.AccidentMem;
+import ru.job4j.accidents.model.*;
 
 import java.util.*;
 
-@Service
-@AllArgsConstructor
-public class AccidentService {
+public interface AccidentService {
 
-    private final AccidentMem accidentMem;
+    Accident save(Accident accident);
 
-    private final AccidentTypeService typeService;
+    void update(Accident accident);
 
-    private final RuleService ruleService;
+    List<Accident> findAll();
 
-    public boolean save(Accident accident, int type, String[] ruleIds) {
-        Accident forAdd = setTypeAndRules(accident, type, ruleIds);
-        return accidentMem.save(forAdd);
-    }
+    Optional<Accident> findById(int id);
 
-    private Accident setTypeAndRules(Accident accident, int typeId, String[] rIds) {
-        Optional<AccidentType> accidentTypeOptional = typeService.findTypeById(typeId);
-        if (accidentTypeOptional.isEmpty()) {
-            throw new NoSuchElementException("The accident type is not found");
-        }
-        Set<Rule> ruleSet = new LinkedHashSet<>();
+    List<AccidentType> getAccidentTypes();
 
-        for (String id: rIds) {
-            int accidentId = Integer.parseInt(id);
-            Optional<Rule> ruleOptional = ruleService.findById(accidentId);
-            if (ruleOptional.isEmpty()) {
-                throw new NoSuchElementException("The accident rule is not found");
-            }
-            ruleSet.add(ruleOptional.get());
-        }
-        accident.setType(accidentTypeOptional.get());
-        accidentMem.save(accident);
-        accident.setRules(ruleSet);
+    List<Rule> getRules();
 
-        return accident;
-    }
-
-    public Optional<Accident> findById(int id) {
-        return accidentMem.findById(id);
-    }
-
-    public boolean update(Accident accident) {
-        Optional<AccidentType> accidentTypeOptional =
-                typeService.findTypeById(accident.getType().getId());
-        if (accidentTypeOptional.isEmpty()) {
-            throw new NoSuchElementException("The accident type is not found");
-        }
-        accident.setType(accidentTypeOptional.get());
-        return accidentMem.update(accident);
-    }
-
-    public List<Accident> findAll() {
-        return accidentMem.findAll();
-    }
+    Set<Rule> makeRules(String[] ids);
 }

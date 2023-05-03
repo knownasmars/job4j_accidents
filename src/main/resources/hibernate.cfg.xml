@@ -14,10 +14,10 @@
         <property name="hibernate.show_sql">true</property>
         <property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
 
-        <mapping class="ru.job4j.cars.model.Accident"/>
-        <mapping class="ru.job4j.cars.model.AccidentRules"/>
-        <mapping class="ru.job4j.cars.model.AccidentType"/>
-        <mapping class="ru.job4j.cars.model.Rule"/>
+        <mapping class="ru.job4j.accidents.model.Accident"/>
+        <mapping class="ru.job4j.accidents.model.AccidentRules"/>
+        <mapping class="ru.job4j.accidents.model.AccidentType"/>
+        <mapping class="ru.job4j.accidents.model.Rule"/>
 
     </session-factory>
 </hibernate-configuration>

@@ -91,7 +91,7 @@ public class AccidentJdbcTemplate {
         return Optional.ofNullable(res);
     }
 
-    public Collection<AccidentType> getAccidentTypes() {
+    public List<AccidentType> getAccidentTypes() {
         return jdbc.query("select id, name from accident_type",
                 (rs, row) -> {
                     AccidentType accidentType = new AccidentType();
@@ -101,7 +101,7 @@ public class AccidentJdbcTemplate {
                 });
     }
 
-    public Collection<Rule> getRules() {
+    public List<Rule> getRules() {
         return jdbc.query("select id, name from rule",
                 (rs, row) -> {
                     Rule rule = new Rule();
