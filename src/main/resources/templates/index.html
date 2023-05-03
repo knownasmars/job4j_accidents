@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
     <!--  Зависимости Bootstrap-->
     <meta charset="utf-8">
@@ -19,6 +19,7 @@
                 <div class="navbar-nav me-auto">
                     <a class="nav-item nav-link active" href="/">Главная</a>
                     <a class="nav-item nav-link" th:href="@{/accidents/all}">Все инциденты</a>
+                    <a class="nav-link text-secondary me-3" href="#" th:text="${user.username}"></a>
                 </div>
             </div>
         </div>
