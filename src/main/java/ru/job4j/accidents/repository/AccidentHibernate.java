@@ -1,17 +1,13 @@
 package ru.job4j.accidents.repository;
 
 import lombok.AllArgsConstructor;
-import org.hibernate.*;
 import org.springframework.stereotype.Repository;
 import ru.job4j.accidents.model.*;
-
 import java.util.*;
 
 @Repository
 @AllArgsConstructor
 public class AccidentHibernate {
-
-    private final SessionFactory sf;
 
     private final CrudRepository crudRepository;
 

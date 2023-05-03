@@ -20,10 +20,15 @@ public class Accident {
     @EqualsAndHashCode.Include
     private int id;
     private String name;
+
     @Column(name = "description")
     private String text;
     private String address;
+
+    @ManyToOne
+    @JoinColumn(name = "accident_type_id")
     private AccidentType type;
+
     @ManyToMany
     @JoinTable(
             name = "accident_rules",
