@@ -18,15 +18,22 @@ import javax.sql.*;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
+    PasswordEncoder passwordEncoder;
+
+    @Autowired
     DataSource ds;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.jdbcAuthentication()
                 .dataSource(ds)
-                .withUser(User.withUsername("user")
-                        .password(passwordEncoder().encode("123456"))
-                        .roles("USER"));
+                .usersByUsernameQuery("select username, password, enabled "
+                        + "from users "
+                        + "where username = ?")
+                .authoritiesByUsernameQuery(
+                        " select u.username, a.authority "
+                                + "from authorities as a, users as u "
+                                + "where u.username = ? and u.authority_id = a.id");
     }
 
     @Bean
