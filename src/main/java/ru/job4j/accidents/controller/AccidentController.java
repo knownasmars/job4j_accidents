@@ -10,10 +10,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 
 import ru.job4j.accidents.model.Accident;
-import ru.job4j.accidents.model.AccidentType;
-import ru.job4j.accidents.service.AccidentService;
-import ru.job4j.accidents.service.AccidentTypeService;
-import ru.job4j.accidents.service.RuleService;
+import ru.job4j.accidents.service.JDBCAccidentService;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -21,49 +18,39 @@ import javax.servlet.http.HttpServletRequest;
 @AllArgsConstructor
 public class AccidentController {
 
-    private final AccidentService accidentService;
-
-    private final AccidentTypeService typeService;
-
-    private final RuleService ruleService;
+    private final JDBCAccidentService accidentService;
 
     @GetMapping("/saveAccident")
     public String viewCreateAccident(Model model) {
-        model.addAttribute("types", typeService.getAllTypes());
-        model.addAttribute("rules", ruleService.getAllRules().stream().toList());
+        model.addAttribute("types", accidentService.getAccidentTypes());
+        model.addAttribute("rules", accidentService.getRules());
         return "createAccident";
     }
 
     @PostMapping("/saveAccident")
     public String save(Model model, @ModelAttribute Accident accident, HttpServletRequest req) {
-        String[] ids = req.getParameterValues("rIds");
-        int typeId = accident.getType().getId();
-        accidentService.save(accident, typeId, ids);
-        if (!accidentService.save(accident, typeId, ids)) {
-            model.addAttribute("message", "The accident wasn't saved!");
-            return "templates/errors/404";
-        }
+        accident.setRules(accidentService.makeRules(req.getParameterValues("rIds")));
+        accidentService.create(accident);
         return "redirect:/index";
     }
 
     @GetMapping("/{id}")
-    public String viewEditAccident(Model model, @PathVariable int id) {
-        var accidentOptional = accidentService.findById(id);
-        if (accidentOptional.isEmpty()) {
-            model.addAttribute("message", "The accident with such \"id\" is not found");
-            return "templates/errors/404";
+    public String edit(Model model, @PathVariable int id) {
+        var accident = accidentService.findById(id);
+        if (accident.isEmpty()) {
+            model.addAttribute("message", "Accident not found");
+            return "errors/404";
         }
-        model.addAttribute("accident", accidentOptional.get());
-        model.addAttribute("types", typeService.getAllTypes());
-        model.addAttribute("rules", ruleService.getAllRules().stream().toList());
+        model.addAttribute("accident", accident.get());
+        model.addAttribute("types", accidentService.getAccidentTypes());
+        model.addAttribute("rules", accidentService.getRules());
         return "editAccident";
     }
 
     @PostMapping("/updateAccident")
-    public String update(@ModelAttribute Accident accident) {
-        if (!accidentService.update(accident)) {
-            return "shared/error404";
-        }
+    public String update(@ModelAttribute Accident accident, HttpServletRequest req) {
+        accident.setRules(accidentService.makeRules(req.getParameterValues("rIds")));
+        accidentService.update(accident);
         return "redirect:/index";
     }
 }
