@@ -25,8 +25,8 @@ Type of system: the main page is a search tool with a table.
 - Liquibase 4.15.0
 - Mockito 4.0.0
 - Lombok 1.18.22
-- Thymeleaf 3.0.15
-- Bootstrap 5.2.3
+- Thymeleaf 3
+- Bootstrap 5
 - HTML, CSS
 
 ## Environment
@@ -34,5 +34,3 @@ JDK 17, IntelliJ IDEA CE 2021.3.3, Maven 3.8.1, PostrgreSQL 15
 
 ## Contacts
 telegram: @knownasmars
-
-## Screenshots 
